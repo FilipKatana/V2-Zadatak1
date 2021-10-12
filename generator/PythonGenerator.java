@@ -1,5 +1,7 @@
 package generator;
 
+import java.util.ArrayList;
+
 import components.Attribute;
 import components.Method;
 import wrappers.Class;
@@ -7,7 +9,7 @@ import wrappers.Interface;
 
 public class PythonGenerator {
 	public static String generateCode(Attribute a) {
-		return "self." + a.getName() + " = " + a.getValue().toString();
+		return a.getName() + " = " + a.getValue().toString();
 	}
 	
 	public static String generateCode(Method m, String start) {
@@ -29,14 +31,26 @@ public class PythonGenerator {
 	}
 	
 	public static String generateCode(Class c) {
-		String result = "class " + c.getName() + ":\n" + "\tdef __init__(self";
+		String result = "class " + c.getName() + ":\n";
+		
+		
+		ArrayList<Attribute> nonStaticAttributes = new ArrayList<Attribute>();
+		for (int i = 0; i < c.attributeCount(); ++i) {
+			if (c.getAttribute(i).isStatic()) {
+				result += "\t" + generateCode(c.getAttribute(i)) + "\n";
+			} else {
+				nonStaticAttributes.add(c.getAttribute(i));
+			}
+		}
+		
+		result += "\tdef __init__(self";
 		for (int i = 0; i < c.attributeCount(); ++i) {
 			result += ", " + c.getAttribute(i).getName();
 		}
 		result += "):\n";
 		
 		for (int i = 0; i < c.attributeCount(); ++i) {
-			result += "\t\t" + generateCode(c.getAttribute(i)) + "\n";
+			result += "\t\t" + "self." + generateCode(c.getAttribute(i)) + "\n";
 		}
 		result += "\n\n";
 		for (int i = 0; i < c.methodCount(); ++i) {

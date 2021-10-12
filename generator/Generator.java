@@ -21,7 +21,6 @@ public class Generator {
 			return y.toString().toLowerCase();
 		case PACKAGE:
 		case LOCAL:
-			return "";
 		default:
 			return "";
 		}
@@ -46,6 +45,14 @@ public class Generator {
 	private static String generateHeader(ObjectOrientedConcept o, String identifier) {
 		String result = stringVisibility(o);
 		result += (result.equals("")) ? "" : " ";
+		
+		switch (o.discriminator()) {
+		case "attribute":
+		case "method":
+			result += ((Component) o).isStatic() ? "static " : "";
+		}
+		
+		
 		result += identifier + " " + o.getName();
 		return result;
 	}

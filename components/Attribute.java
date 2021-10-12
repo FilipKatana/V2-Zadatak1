@@ -1,5 +1,6 @@
 package components;
 
+
 import abstracts.Component;
 import enums.Type;
 import enums.Visibility;
@@ -17,8 +18,8 @@ public class Attribute extends Component {
 		failConstructor("The assigned type " + type + " does not match the given value: " + value);
 	}
 	
-	public Attribute(Visibility visibility, Type type, String name, Object value) {
-		super(visibility, type, name);
+	public Attribute(Visibility visibility, boolean Static, Type type, String name, Object value) {
+		super(visibility, Static, type, name);
 		switch(type) {
 		case DOUBLE:
 			if (!(value instanceof Double)) {
@@ -48,9 +49,18 @@ public class Attribute extends Component {
 		
 		this.value = value;
 	}
+	
+	public Attribute(Visibility visibility, Type type, String name, Object value) {
+		this(visibility, false, type, name, value);
+	}
 
 	public Object getValue() {
 		return value;
+	}
+
+	
+	public String discriminator() {
+		return "attribute";
 	}
 	
 }

@@ -3,7 +3,6 @@ package wrappers;
 import java.util.ArrayList;
 
 import abstracts.AbstractWrapper;
-import abstracts.Component;
 import components.Attribute;
 import components.Method;
 import enums.Visibility;
@@ -11,18 +10,22 @@ import enums.Visibility;
 public class Class extends AbstractWrapper {
 	
 	private ArrayList<Attribute> attributes;
+	
 
-	public Class(Visibility visibility, String name, Component ...components) {
-		super(visibility, name);
+	public Class(Visibility visibility, String name, ArrayList<AbstractWrapper> supers, ArrayList<Attribute> attributes, ArrayList<Method> methods) {
+		super(visibility, name, supers, methods);
 		this.attributes = new ArrayList<Attribute>();
 		
-		for (Component com : components) {
-			if (com instanceof Method) {
-				this.addMethod((Method) com);
-			} else if (com instanceof Attribute) {
-				this.addAttribute((Attribute) com);
+		for (Attribute a : attributes) {
+			if (a.getVisibility() == Visibility.LOCAL) {
+				throw new IllegalArgumentException("Exception while constructing class! Forbidden visibility LOCAL assigned to attribute " + a.getName());
 			}
+			
+			this.attributes.add(a);
+			
 		}
+		
+
 	}
 	
 	public void addAttribute(Attribute a) {
@@ -38,6 +41,10 @@ public class Class extends AbstractWrapper {
 	
 	public int attributeCount() {
 		return this.attributes.size();
+	}
+	
+	public String discriminator() {
+		return "class";
 	}
 
 }

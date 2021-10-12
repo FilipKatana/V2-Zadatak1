@@ -10,8 +10,8 @@ public class Method extends Component {
 	
 	private ArrayList<Attribute> arguments;
 
-	public Method(Visibility visibility, Type type, String name, Attribute ...args) {
-		super(visibility, type, name);
+	public Method(Visibility visibility, boolean Static, Type type, String name, Attribute ...args) {
+		super(visibility, Static, type, name);
 		
 		if (visibility == Visibility.LOCAL) {
 			throw new IllegalArgumentException("Failed method construction! LOCAL visibility is reserved exclusively for attributes!");
@@ -29,12 +29,20 @@ public class Method extends Component {
 		}
 	}
 	
+	public Method(Visibility visibility, Type type, String name, Attribute ...args) {
+		this(visibility, false, type, name, args);
+	}
+	
 	public Attribute getArgument(int index) {
 		return this.arguments.get(index);
 	}
 	
 	public int argumentCount() {
 		return this.arguments.size();
+	}
+	
+	public String discriminator() {
+		return "method";
 	}
 	
 }
