@@ -61,12 +61,15 @@ public class Generator {
 		return (c.getType() == Type.STRING) ? "String" : c.getType().toString().toLowerCase();
 	}
 	
+	//ATTRIBUTE
 	public static String generateCode(Attribute a) {
 		String result = generateHeader(a, componentType(a));
 		result += " = " + attributeValue(a) + ";";
 		return result;
 	}
 	
+	
+	//METHOD
 	public static String generateCode(Method m, boolean hasBody) {
 		String result = generateHeader(m, componentType(m)) + "(";
 		for (int i = 0; i < m.argumentCount(); ++i) {
@@ -102,10 +105,12 @@ public class Generator {
 	}
 	
 	
+	//METHOD 2
 	public static String generateCode(Method m) {
 		return generateCode(m, true);
 	}
 	
+	//INTERFACE
 	public static String generateCode(Interface iFace) {
 		String result = generateHeader(iFace, "interface");
 		result += " {\n";
@@ -117,8 +122,39 @@ public class Generator {
 	}
 	
 	
+	//CLASS
 	public static String generateCode(Class c) {
 		String result = generateHeader(c, "class");
+		
+		String interfaces = "";
+		boolean hasSuper = false;
+		
+		//Inheretence
+		for (int i = 0; i < c.superCount(); ++i) {
+			//Interface or class check
+			if (c.getSuper(i).discriminator() == "class") {
+				//One super per class rule
+				if (hasSuper) {
+					throw new IllegalArgumentException("The class " + c.getName() + " provided to the generator has more than one super class. Due to Java "
+							+ "restrictions, only one super class is allowed.");
+				} else {
+					hasSuper = true;
+					result += " extends " + c.getSuper(i).getName();
+				}
+			} else if (c.getSuper(i).discriminator() == "interface") { //Accumulate interface string
+				if (interfaces != "") {
+					interfaces += ", ";
+				}
+				
+				interfaces += c.getSuper(i).getName();
+			}
+		}
+		
+		//Add accumulated string
+		if (interfaces != "") {
+			result += " implements " + interfaces + " ";
+		}
+		
 		result += " {\n";
 		
 		for (int i = 0; i < c.attributeCount(); ++i) {
