@@ -21,6 +21,8 @@ public abstract class ObjectOrientedConcept {
 	public Visibility getVisibility() {
 		return visibility;
 	}
+	
+	public abstract String discriminator();
 
 
 }
